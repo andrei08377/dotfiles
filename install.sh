@@ -71,6 +71,8 @@ if [ -s "$REPO/lists/flatpak.txt" ]; then
 fi
 
 # ================================================================ dotfiles ==
+[ $DRY -eq 1 ] && { log "(dry) Pana aici nimic nu a fost modificat. Stop."; exit 0; }
+
 log "Restaurez configurile (~/.config)..."
 mkdir -p "$HOME/.config" "$HOME/.local/bin" "$HOME/.local/share"
 
@@ -85,9 +87,6 @@ done
 
 for f in "$REPO"/dotfiles/config/*.toml "$REPO"/dotfiles/config/*.dirs; do
     [ -f "$f" ] && cp -f "$f" "$HOME/.config/$(basename "$f")"
-done
-for f in settings.json settings.json.bak; do
-    [ -f "$REPO/dotfiles/config/discord/$f" ] && mkdir -p "$HOME/.config/discord" && cp -f "$REPO/dotfiles/config/discord/$f" "$HOME/.config/discord/"
 done
 
 log "Restaurez fisiere din HOME..."
