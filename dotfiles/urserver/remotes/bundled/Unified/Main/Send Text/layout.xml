@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layout color="#737374">
+  <grid>
+    <row weight="3">
+      <text id="text" onChange="change" multiLine="true" />
+    </row>
+    <row weight="1">
+      <button text="Enter" onTap="enter" />
+      <button text="Back" onTap="back" />
+    </row>
+    <row weight="1">
+      <button text="Send Text" onTap="send" />
+    </row>
+    <row weight="1">
+      <button text="To Clipboard" onTap="copy" />
+    </row>
+  </grid>
+</layout>

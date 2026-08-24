@@ -1,0 +1,11 @@
+[Unit]
+Description=Huawei Watch heart rate BLE daemon
+After=bluetooth.service
+
+[Service]
+ExecStart=/home/andrei/venv-hr/bin/python /home/andrei/.local/bin/hr-daemon.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,110 @@
+#!/home/andrei/.local/share/hama-bulb/venv/bin/python
+"""Control a Hama (Tuya-based) WiFi bulb over the local network.
+
+Usage:
+  bulbctl status              Print JSON {on, brightness, warmth} (exit 3 if unreachable)
+  bulbctl on                  Turn the bulb on
+  bulbctl off                 Turn the bulb off
+  bulbctl toggle              Toggle the bulb, prints new state
+  bulbctl brightness <0-100>  Set brightness percent
+  bulbctl warmth <0-100>      Set colour temperature percent (0=cold, 100=warm)
+"""
+import json
+import socket
+import sys
+from pathlib import Path
+
+import tinytuya
+
+CONFIG_PATH = Path.home() / ".config" / "hama-bulb.json"
+TIMEOUT = 4.0
+
+
+def load_config():
+    try:
+        cfg = json.loads(CONFIG_PATH.read_text())
+        return cfg["id"], cfg["ip"], cfg["key"], cfg.get("version", 3.3)
+    except FileNotFoundError:
+        sys.exit(f"config missing: {CONFIG_PATH}")
+    except KeyError as e:
+        sys.exit(f"config incomplete: missing {e} in {CONFIG_PATH}")
+
+
+def connect():
+    dev_id, ip, key, version = load_config()
+    bulb = tinytuya.BulbDevice(dev_id, address=ip, local_key=key)
+    bulb.set_version(float(version))
+    bulb.set_socketTimeout(TIMEOUT)
+    return bulb
+
+
+def read_dps(bulb):
+    dps = bulb.status().get("dps", {})
+    return dps
+
+
+def parse_state(dps):
+    # common switch dps keys: 20 (newer bulbs), 1 (older white bulbs)
+    on = None
+    for k in ("20", "1"):
+        if k in dps:
+            on = bool(dps[k])
+            break
+    if on is None:
+        raise ValueError(f"no switch dps found in: {dps}")
+
+    brightness = dps.get("22")
+    warmth = dps.get("23")
+
+    def pct(v, lo=0):
+        if v is None:
+            return None
+        try:
+            v = float(v)
+        except (TypeError, ValueError):
+            return None
+        span = 1000 - lo
+        return max(0, min(100, round((v - lo) / span * 100)))
+
+    return {"on": on, "brightness": pct(brightness), "warmth": pct(warmth)}
+
+
+def main():
+    args = sys.argv[1:]
+    valid = ("status", "on", "off", "toggle", "brightness", "warmth")
+    if not args or args[0] not in valid or (args[0] in ("brightness", "warmth") and len(args) != 2):
+        print(__doc__.strip())
+        sys.exit(2)
+
+    cmd = args[0]
+    try:
+        bulb = connect()
+        if cmd == "status":
+            print(json.dumps(parse_state(read_dps(bulb))))
+            return
+        if cmd in ("brightness", "warmth"):
+            value = int(args[1])
+            if not 0 <= value <= 100:
+                raise ValueError("value must be 0-100")
+            if cmd == "brightness":
+                bulb.set_brightness_percentage(value)
+            else:
+                bulb.set_colourtemp_percentage(value)
+            print(json.dumps({cmd: value}))
+            return
+        if cmd == "toggle":
+            new_state = not bool(parse_state(read_dps(bulb))["on"])
+            bulb.turn_onoff(new_state)
+            print("on" if new_state else "off")
+            return
+        getattr(bulb, f"turn_{cmd}")()
+        print(cmd)
+    except (socket.timeout, OSError, ValueError, KeyError, TypeError) as e:
+        if cmd == "status":
+            print("unknown")
+            sys.exit(3)
+        sys.exit(f"bulb error: {e}")
+
+
+if __name__ == "__main__":
+    main()

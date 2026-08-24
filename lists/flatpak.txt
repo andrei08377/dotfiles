@@ -1,0 +1,5 @@
+com.usebottles.bottles
+com.valvesoftware.Steam
+org.libreoffice.LibreOffice
+org.mozilla.firefox
+org.videolan.VLC

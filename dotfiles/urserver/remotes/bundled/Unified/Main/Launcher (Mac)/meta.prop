@@ -1,0 +1,7 @@
+# Required for free version
+meta.id: Unified.LauncherMac
+meta.name: Launcher
+meta.author: Unified
+meta.description: Launch applications.
+meta.platform: macosx
+meta.tags.category: utility

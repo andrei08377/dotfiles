@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layout>
+	<label text="Requires newer version of app/server.\n\nUpdate or contact support." />
+</layout>

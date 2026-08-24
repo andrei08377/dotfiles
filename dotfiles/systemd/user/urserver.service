@@ -1,0 +1,13 @@
+[Unit]
+Description=Unified Remote Server
+After=network-online.target
+
+[Service]
+Type=forking
+Environment=HOME=/home/andrei
+ExecStart=/opt/urserver/urserver --remotes=/home/andrei/.urserver/remotes --daemon --pidfile=%t/urserver.pid
+PIDFile=%t/urserver.pid
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

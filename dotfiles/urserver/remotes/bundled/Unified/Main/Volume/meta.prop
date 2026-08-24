@@ -1,0 +1,5 @@
+meta.name: Volume
+meta.author: Unified
+meta.description: Control system volume.
+meta.platform: windows macosx
+meta.tags.category: utility
