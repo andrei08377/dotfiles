@@ -79,11 +79,18 @@ mkdir -p "$HOME/.config" "$HOME/.local/bin" "$HOME/.local/share"
 shopt -s nullglob
 for d in "$REPO"/dotfiles/config/*/; do
     name="$(basename "$d")"
+    # discord contine cache volatil scris de aplicatie -> NU il symlink-uiti
+    [ "$name" = "discord" ] && continue
     if [ -e "$HOME/.config/$name" ] && [ ! -L "$HOME/.config/$name" ]; then
         mv "$HOME/.config/$name" "$HOME/.config/${name}.pre-dotfiles.$(date +%s)"
     fi
     ln -sfn "$d" "$HOME/.config/$name"
 done
+
+# discord: restauram doar setarile
+mkdir -p "$HOME/.config/discord"
+[ -f "$REPO/dotfiles/config/discord/settings.json" ] && \
+    cp -f "$REPO/dotfiles/config/discord/settings.json" "$HOME/.config/discord/"
 
 for f in "$REPO"/dotfiles/config/*.toml "$REPO"/dotfiles/config/*.dirs; do
     [ -f "$f" ] && cp -f "$f" "$HOME/.config/$(basename "$f")"
