@@ -33,10 +33,11 @@ apoi `spicetify backup apply`.
 - venv-uri python reconstruite automat (bleak + tinytuya)
 - Spotify + spicetify cu schemele EverforestDarkHard / RosePineDawn
 
-## SECRETE (nu urca niciodată pe repo public!)
+## Notă securitate
 
-- `secrets/hama-bulb.json` — cheia becului (gitignored)
-- MAC-ul senzorului puls e în `dotfiles/local-bin/hr-daemon.py`
+Repo-ul e **privat** și include `secrets/hama-bulb.json` (cheia becului) — doar
+pentru uz personal, nu-l face public niciodată. MAC-ul senzorului de puls e în
+`dotfiles/local-bin/hr-daemon.py`.
 
 ## Suport multi-distro
 

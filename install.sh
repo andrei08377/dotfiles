@@ -158,7 +158,7 @@ command -v urserver >/dev/null 2>&1 || [ -x /opt/urserver/urserver ] && run syst
 if [ -f "$REPO/secrets/hama-bulb.json" ]; then
     cp -f "$REPO/secrets/hama-bulb.json" "$HOME/.config/hama-bulb.json"
 else
-    warn "LIPSA secrets/hama-bulb.json — copiaza-l manual (becul nu va functiona fara el)."
+    warn "LIPSA secrets/hama-bulb.json — becul nu va functiona fara el."
 fi
 
 # ============================================================= spicetify ====
